@@ -1,24 +1,100 @@
+# import libraries
 import sys
+import pandas as pd
+import numpy as np
+import re
+import nltk
+nltk.download(['punkt', 'wordnet'])
+nltk.download('stopwords')
+from sqlalchemy import create_engine
+from nltk.tokenize import word_tokenize
+from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.corpus import stopwords
+
+from sklearn.model_selection import train_test_split
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, classification_report, confusion_matrix
+from sklearn.model_selection import GridSearchCV
 
 
 def load_data(database_filepath):
-    pass
+    '''
+    Loads data from database file and return features(messages) and labels(categories)
+    Args: database_filepath: the path of the database
+    Returns: X: features(messages)
+             Y: categories
+    '''
+    engine = create_engine('sqlite:///'+database_filepath)
+    df = pd.read_sql('InsertTableName', engine)
+    X = df['message']
+    Y = df.iloc[:,4:]
+    return(X, y)
 
 
 def tokenize(text):
-    pass
+    '''
+    Tokenize a text and cleaning it
+    Args: text: the text to process
+    Returns: clean_tokens: processed text, with removed stop words, and Lemmatization applied
+    '''
+    # remove punctuations
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text)
+    tokens = word_tokenize(text)
+    tokens = [w for w in tokens if w not in stopwords.words('english')]
+    # lemmatize as shown in the classroom
+    lemmatizer = WordNetLemmatizer()
+    clean_tokens = []
+    for tok in tokens:
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
+    return clean_tokens
 
 
 def build_model():
-    pass
+    '''
+    Builds a ML model pipeline for training
+    Returns: cv: A Grid Search selector on the complete model pipeline
+    '''
+    pipeline = Pipeline([('count', CountVectorizer(tokenizer=tokenize)),
+                         ('tfidf', TfidfTransformer()),
+                         ('clf', MultiOutputClassifier(RandomForestClassifier(n_estimators=10,random_state=13,n_jobs=1)))
+                        ]);
+
+    parameters = {'model__estimator__max_depth' : [5, 10], 'model__estimator__max_features' : [5, 10], 'model__estimator__criterion' : ['gini', 'entropy']};
+
+    cv = GridSearchCV(pipeline, param_grid=parameters, verbose=2);
+
+    return cv;
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    '''
+    Evalutates the model on testing data
+    Args: X_test: Messages to test on
+          Y_test: Categories to predict
+          category_names: Category label names
+    '''
+    y_pred = model.predict(X_test)
+    y_pred = pd.DataFrame(y_pred)
+    y_pred.columns = Y_test.columns
+    
+    for column in y_test.columns:
+        print('Column : ' , column)
+        print(classification_report(Y_test[column], y_pred[column]))
+    
 
 
 def save_model(model, model_filepath):
-    pass
+    '''
+    Saves the model to a file
+    Args: model: The Scikit-Learn model to save
+          model_filepath: The file in which to save the model
+    '''
+    pickle.dump(model, open(model_filepath, 'wb'));
 
 
 def main():
