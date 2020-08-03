@@ -7,7 +7,7 @@ def load_data(messages_filepath, categories_filepath):
     '''
     Loads data from files and creates a dataframe
     Args: message_filepath: file location for the messages data
-      categories_filepath: file location for the categories data
+          categories_filepath: file location for the categories data
     Returns: df: A merged dataframe of the two datasets on ID
     '''
     messages = pd.read_csv(messages_filepath)
@@ -17,14 +17,60 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    '''
+    Pre-processing and cleaning the dataset
+    Args: df: The dataframe to process
+    Returns: df: The processed dataframe, with categories expanded as dummy variables and duplicates removed
+    '''
+    # create a dataframe of the 36 individual category columns
+    categories = df['categories'].str.split(';', expand=True)
     
-    pass
+    # select the first row of the categories dataframe
+    row = categories.iloc[0,:]
+
+    # use this row to extract a list of new column names for categories.
+    category_colnames = row.apply(lambda x:x[:-2])
+    
+    # rename the columns of `categories`
+    categories.columns = category_colnames
+    
+    # convert category values to just numbers 0 or 1
+    for column in categories:
+        # set each value to be the last character of the string
+        categories[column] = categories[column].str.get(-1)
+    
+        # convert column from string to numeric
+        categories[column] = categories[column].astype(int)
+    
+    # replace categories column in df with new category columns
+    
+    # drop the original categories column from `df`
+    df.drop('categories', axis=1, inplace=True)
+    
+    # concatenate the original dataframe with the new `categories` dataframe
+    df = pd.concat([df, categories], axis=1)
+    
+    # remove duplicates
+    df = df.drop_duplicates(keep='last');
+    
+    return df
+
 
 
 def save_data(df, database_filename):
-    pass  
+    '''
+    Saves the dataset into a sql database file
+    Args: df: The dataframe to save
+          database_filename: the file in which to save the data file
+    '''
+    engine = create_engine('sqlite:///' + database_filename)
+    df.to_sql('disaster_data_cleaned', engine, index=False, if_exists='replace')
 
 
+
+'''
+Driver for the application, loads in the data, cleans it, and saves it as a sql database
+'''
 def main():
     if len(sys.argv) == 4:
 
