@@ -1,11 +1,23 @@
 import sys
-
+import pandas as pd;
+import numpy as np;
+from sqlalchemy import create_engine;
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    '''
+    Loads data from files and creates a dataframe
+    Args: message_filepath: file location for the messages data
+      categories_filepath: file location for the categories data
+    Returns: df: A merged dataframe of the two datasets on ID
+    '''
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+    df = messages.merge(categories, how='inner', on='id')
+    return(messages, categories, df)
 
 
 def clean_data(df):
+    
     pass
 
 
