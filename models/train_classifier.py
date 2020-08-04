@@ -19,6 +19,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, classification_report, confusion_matrix
 from sklearn.model_selection import GridSearchCV
 
+import pickle
+
 
 def load_data(database_filepath):
     '''
@@ -28,10 +30,12 @@ def load_data(database_filepath):
              Y: categories
     '''
     engine = create_engine('sqlite:///'+database_filepath)
-    df = pd.read_sql('InsertTableName', engine)
+    #conn = engine.connect();
+    df = pd.read_sql("SELECT * FROM disaster_data_cleaned", engine)
     X = df['message']
     Y = df.iloc[:,4:]
-    return(X, y)
+    category_names = Y.columns
+    return X, Y, category_names
 
 
 def tokenize(text):
@@ -60,10 +64,10 @@ def build_model():
     '''
     pipeline = Pipeline([('count', CountVectorizer(tokenizer=tokenize)),
                          ('tfidf', TfidfTransformer()),
-                         ('clf', MultiOutputClassifier(RandomForestClassifier(n_estimators=10,random_state=13,n_jobs=1)))
+                         ('model', MultiOutputClassifier(RandomForestClassifier(n_estimators=10,random_state=13,n_jobs=1)))
                         ]);
 
-    parameters = {'model__estimator__max_depth' : [5, 10], 'model__estimator__max_features' : [5, 10], 'model__estimator__criterion' : ['gini', 'entropy']};
+    parameters = {'model__estimator__max_depth' : [5, 10], 'model__estimator__max_features' : [5, 10]};
 
     cv = GridSearchCV(pipeline, param_grid=parameters, verbose=2);
 
@@ -81,7 +85,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
     y_pred = pd.DataFrame(y_pred)
     y_pred.columns = Y_test.columns
     
-    for column in y_test.columns:
+    for column in Y_test.columns:
         print('Column : ' , column)
         print(classification_report(Y_test[column], y_pred[column]))
     
