@@ -12,9 +12,8 @@ def load_data(messages_filepath, categories_filepath):
     '''
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
-    df = messages.merge(categories, on='id')
-    print(df.head())
-    return(messages, categories, df)
+    df = messages.merge(categories, how='inner', on='id')
+    return df
 
 
 def clean_data(df):
@@ -23,7 +22,6 @@ def clean_data(df):
     Args: df: The dataframe to process
     Returns: df: The processed dataframe, with categories expanded as dummy variables and duplicates removed
     '''
-    # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(';', expand=True);
     
     # select the first row of the categories dataframe
