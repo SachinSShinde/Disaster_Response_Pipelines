@@ -1,7 +1,7 @@
 import sys
-import pandas as pd;
-import numpy as np;
-from sqlalchemy import create_engine;
+import pandas as pd
+import numpy as np
+from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
     '''
@@ -12,7 +12,8 @@ def load_data(messages_filepath, categories_filepath):
     '''
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
-    df = messages.merge(categories, how='inner', on='id')
+    df = messages.merge(categories, on='id')
+    print(df.head())
     return(messages, categories, df)
 
 
@@ -23,16 +24,16 @@ def clean_data(df):
     Returns: df: The processed dataframe, with categories expanded as dummy variables and duplicates removed
     '''
     # create a dataframe of the 36 individual category columns
-    categories = df['categories'].str.split(';', expand=True)
+    categories = df['categories'].str.split(';', expand=True);
     
     # select the first row of the categories dataframe
-    row = categories.iloc[0,:]
+    row = categories.iloc[0,:];
 
     # use this row to extract a list of new column names for categories.
-    category_colnames = row.apply(lambda x:x[:-2])
+    category_colnames = row.apply(lambda x:x[:-2]);
     
     # rename the columns of `categories`
-    categories.columns = category_colnames
+    categories.columns = category_colnames;
     
     # convert category values to just numbers 0 or 1
     for column in categories:
