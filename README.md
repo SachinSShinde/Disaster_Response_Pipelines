@@ -4,23 +4,23 @@ A machine learning pipeline built to categorize emergency messages based on the 
 Follwing a disaster you will get millions of messages either direct or via social media right at the time when disaster organizations have the least capacity to filter and then pull out the messages which are important. Often one in thousand messages that might be relevent and important to the disaster response professionals.So the way that disasters are typically responded to, is that different organizations will take care of different parts of the problems. So one organization will take care of water, another will care about blocked roads, medical supplies. These are the categories for which data is pulled, combined and relabelled from Figure Eight. The motivation of this project is to build tool/classifier to categorize tweets/news/messages at the time of disaster to certain categories to facilitate identifying help needed in emergency situation.
 
 ### File Descriptions:
-- app
-| - template
-| |- master.html  # main page of web app
-| |- go.html  # classification result page of web app
-|- run.py  # Flask file that runs app
+* app
+    * template
+        * master.html           # main page of web app
+        * go.html               # classification result page of web app
+    * run.py                    # Flask file that runs app
 
-- data
-|- disaster_categories.csv  # data to process 
-|- disaster_messages.csv  # data to process
-|- process_data.py
-|- InsertDatabaseName.db   # database to save clean data to
+* data
+    * disaster_categories.csv  # Raw data containing categories
+    * disaster_messages.csv    # Raw data containing messages
+    * process_data.py          # Code to clean the data and save in database
+    * DisasterResponse.db      # Saved clean data in database
 
-- models
-|- train_classifier.py
-|- classifier.pkl  # saved model 
+* models
+    * train_classifier.py           # Code to train the model
+    * classifier.pkl  # saved model # Trained model saved as pickle file
 
-- README.md
+* README.md
 
 
 ### Instructions:
