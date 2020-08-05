@@ -10,14 +10,11 @@ Table of Contents
   * [Instructions](#instructions)
   * [License](#license)
 
-
-### Introduction
-Alt-H3
+Introduction
 ----------------
 Follwing a disaster you will get millions of messages either direct or via social media right at the time when disaster organizations have the least capacity to filter and then pull out the messages which are important. Often one in thousand messages that might be relevent and important to the disaster response professionals.So the way that disasters are typically responded to, is that different organizations will take care of different parts of the problems. So one organization will take care of water, another will care about blocked roads, medical supplies. These are the categories for which data is pulled, combined and relabelled from Figure Eight. The motivation of this project is to build tool/classifier to categorize tweets/news/messages at the time of disaster to certain categories to facilitate identifying help needed in emergency situation.
 
-### File Descriptions
-Alt-H3
+File Descriptions
 ----------------
 * app
     * template
@@ -37,8 +34,7 @@ Alt-H3
 
 * README.md
 
-### Installation
-Alt-H3
+Installation
 ----------------
 This project uses Python 3, along with Jupyter Notebook. The following libraries are necessary for running the notebook:
 
@@ -51,8 +47,7 @@ This project uses Python 3, along with Jupyter Notebook. The following libraries
 * NLTK
 
 
-### Instructions
-Alt-H3
+Instructions
 ----------------
 1. Run the following commands in the project's root directory to set up your database and model.
 
@@ -66,7 +61,6 @@ Alt-H3
 
 3. Go to http://0.0.0.0:3001/
 
-### License
-Alt-H3
+License
 ----------------
 Credit to FigureEight for providing the data. You can find the Licensing for the data and other descriptive information at theri website [here](https://appen.com/datasets/combined-disaster-response-data/)
